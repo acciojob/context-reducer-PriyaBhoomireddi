@@ -1,85 +1,73 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from './AuthContext';
+//cypress test cases not running
+// App.js
+import React, { useState, useContext } from 'react';
+
 
 const App = () => {
-  const { state, dispatch } = useContext(AuthContext); // Access the context state and dispatch
-  const [inputValue, setInputValue] = useState(''); // Input state
+    const [inputValue, setInputValue] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [currentUser, setCurrentUser] = useState('');
+    const [items, setItems] = useState([]);
 
-  // Login handler
-  const handleLogin = () => {
-    dispatch({ type: 'LOGIN' });
-  };
 
-  // Signout handler
-  const handleSignout = () => {
-    dispatch({ type: 'SIGNOUT' });
-  };
+    const login = () => {
+        setCurrentUser('rohan');
+        setIsAuthenticated(true);
+    };
 
-  // Add item handler
-  const handleAddItem = () => {
-    if (inputValue.trim()) {
-      dispatch({ type: 'ADD_ITEM', payload: inputValue });
-      setInputValue('');
-    }
-  };
+    const logout = () => {
+        setCurrentUser('');
+        setIsAuthenticated(false);
+    };
 
-  // Remove item handler
-  const handleRemoveItem = (item) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: item });
-  };
+    const addItem = (item) => {
+        setItems([...items, item]);
+    };
 
-  // Clear list handler
-  const handleClearList = () => {
-    dispatch({ type: 'CLEAR_ITEMS' });
-  };
+    const removeItem = (item) => {
+        setItems(items.filter(i => i !== item));
+    };
 
-  return (
-    <div>
-      <h1>Shopping List App</h1>
+    const clearItems = () => {
+        setItems([]);
+    };
 
-      {/* Login and Signout buttons */}
-      <button id="login-btn" onClick={handleLogin}>
-        Login
-      </button>
-      <button id="signout" onClick={handleSignout}>
-        Signout
-      </button>
 
-      {/* Display current user info */}
-      <p id="current-user">
-        Current user: {state.currentUser}, isAuthenticated: {state.isAuthenticated ? 'Yes' : 'No'}
-      </p>
+    const handleAdd = () => {
+        if (inputValue.trim()) {
+            addItem(inputValue.trim());
+            setInputValue('');
+        }
+    };
 
-      {/* Input box */}
-      <input
-        id="shopping-input"
-        type="text"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter item"
-      />
 
-      {/* Add button */}
-      <button onClick={handleAddItem}>Add</button>
-
-      {/* Display the list of items */}
-      <ul>
-        {state.items.map((item, index) => (
-          <li key={index} id={`item-${item}`}>
-            {item}
-            <button id={`remove-${item}`} onClick={() => handleRemoveItem(item)}>
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {/* Clear list button */}
-      <button id="clear-list" onClick={handleClearList}>
-        Clear List
-      </button>
-    </div>
-  );
+    return (
+        <div>
+            <div>
+                <button id="login-btn" onClick={login}>Login</button>
+                <button id="signout" onClick={logout}>Signout</button>
+            </div>
+            <div id="current-user">
+                {`Current user: ${currentUser}, isAuthenticated: ${isAuthenticated ? 'Yes' : 'No'}`}
+            </div>
+            <input
+                id="shopping-input"
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+            />
+            <button onClick={handleAdd}>Add</button>
+            <button id="clear-list" onClick={clearItems}>Clear List</button>
+            <ul>
+                {items.map(item => (
+                    <li key={item} id={`item-${item}`}>
+                        {item}
+                        <button id={`remove-${item}`} onClick={() => removeItem(item)}>Remove</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 };
 
 export default App;
